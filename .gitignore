@@ -1,0 +1,13 @@
+#Directories.
+/build/
+/logs/
+/run/
+/src/test/
+#Files.
+/preciousshot.json
+/preciousshot2.json
+/buildlog.txt
+/release.bat
+/==NOTICE==.txt
+/Aapache-License-2.0.txt
+/build_original.gradle
