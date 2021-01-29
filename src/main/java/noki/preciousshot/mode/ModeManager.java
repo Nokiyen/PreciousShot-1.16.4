@@ -30,6 +30,7 @@ public class ModeManager {
 	public static ModeEventShooting modePanorama;
 	
 	public static KeyBinding keyF2 = new KeyBinding("preciousshot.key.f2", GLFW.GLFW_KEY_F2, "System");
+	public static KeyBinding keyEsc = new KeyBinding("preciousshot.key.esc", GLFW.GLFW_KEY_ESCAPE, "System");
 	public static KeyBinding key = new KeyBinding("preciousshot.key.on", PreciousShotConf.keyNum.get(), "System");
 	
 	
@@ -71,7 +72,10 @@ public class ModeManager {
 			return;
 		}*/
 //		if(event.getKey() != GLFW.GLFW_KEY_J) {
-		if(!key.isKeyDown()) {
+
+		boolean keyFlag = key.isKeyDown();
+		boolean escFlag = keyEsc.isKeyDown();
+		if(!keyFlag && !escFlag) {
 			PreciousShotCore.log("key is not pressed:"+event.hashCode());
 			PreciousShotCore.log("false");
 			return;
@@ -82,16 +86,27 @@ public class ModeManager {
 		if(PANORAMA.isEnable()) {
 			currentMode = modePanorama;
 		}
+
+		//if j key is pressed.
+		if(keyFlag) {
+			if(currentMode.isOpen()) {
+				PreciousShotCore.log("close mode.");
+				currentMode.closeMode();
+				Minecraft.getInstance().displayGuiScreen(new ModeGuiSetting());
+			}
+			else {
+				PreciousShotCore.log("open mode.");
+				currentMode.openMode();
+			}
+			return;
+		}
+
+		//if esc key is pressed when the current mode is open.
 		if(currentMode.isOpen()) {
-			PreciousShotCore.log("close mode.");
 			currentMode.closeMode();
-			Minecraft.getInstance().displayGuiScreen(new ModeGuiSetting());
+//			event.setCanceled(true);
 		}
-		else {
-			PreciousShotCore.log("open mode.");
-			currentMode.openMode();
-		}
-		
+
 	}
 	
 	//チャットがクリックされたとき、閲覧モードを開く設定のチャット文なら、閲覧モードの個別表示に直接移行する。
@@ -122,6 +137,7 @@ public class ModeManager {
 	public static void init() {
 		
 		ClientRegistry.registerKeyBinding(ModeManager.keyF2);
+		ClientRegistry.registerKeyBinding(ModeManager.keyEsc);
 		ClientRegistry.registerKeyBinding(ModeManager.key);
 		
 		instance = new ModeManager();
