@@ -216,7 +216,19 @@ public class ModeEventPanorama extends ModeEventShooting {
 	
 	@Override
 	public void setFadeStrings() {
-		
+
+		this.fadeStrings.clear();
+
+//		this.fadeStrings.add(new RenderHelper.FadeStringRender(LangKey.SHOOTING_MODE.translated(), 0xffffff, 5, 5,
+//				Minecraft.getInstance().fontRenderer, 0, 0, 100, 20));
+		if(!SHOT.isEnable()) {
+			this.fadeStrings.add(new RenderHelper.FadeStringRender(LangKey.SHOOTING_STOPPED.translated(), 0xff6666, 5, 15,
+					Minecraft.getInstance().fontRenderer, 0, 0, 100, 20));
+		}
+		if(this.fovRender != null) {
+			this.fadeStrings.add(this.fovRender);
+		}
+
 	}
 	
 	@Override

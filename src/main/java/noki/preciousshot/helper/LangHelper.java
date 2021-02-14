@@ -88,6 +88,7 @@ public class LangHelper {
 		PANORAMA_MODE	("preciousshot.chat.panorama.mode"),
 		PANORAMA_DONE	("preciousshot.chat.panorama.done"),
 		PANORAMA_FAILED	("preciousshot.chat.panorama.failed"),
+		SHOOTING_STOPPED("preciousshot.chat.shooting.stop"),
 		TWITTER_DISABLED("preciousshot.chat.twitter.disabled"),
 		TWITTER_FAILED	("preciousshot.chat.twitter.failed"),
 		TWITTER_SUCCESS	("preciousshot.chat.twitter.sccess"),
