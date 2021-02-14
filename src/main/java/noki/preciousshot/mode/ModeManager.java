@@ -31,6 +31,8 @@ public class ModeManager {
 	
 	public static KeyBinding keyF2 = new KeyBinding("preciousshot.key.f2", GLFW.GLFW_KEY_F2, "System");
 	public static KeyBinding keyEsc = new KeyBinding("preciousshot.key.esc", GLFW.GLFW_KEY_ESCAPE, "System");
+	public static KeyBinding keyCtrlLeft = new KeyBinding("preciousshot.key.ctrl_left", GLFW.GLFW_KEY_LEFT_CONTROL, "System");
+	public static KeyBinding keyCtrlRight = new KeyBinding("preciousshot.key.ctrl_right", GLFW.GLFW_KEY_RIGHT_CONTROL, "System");
 	public static KeyBinding key = new KeyBinding("preciousshot.key.on", PreciousShotConf.keyNum.get(), "System");
 	
 	
@@ -129,6 +131,16 @@ public class ModeManager {
 		event.setCanceled(true);
 		
 	}*/
+
+	public static boolean isShootingModeOpen() {
+
+		ModeEventShooting currentMode = modeShooting;
+		if(PANORAMA.isEnable()) {
+			currentMode = modePanorama;
+		}
+		return currentMode.isOpen();
+
+	}
 	
 	
 	//----------
@@ -138,6 +150,8 @@ public class ModeManager {
 		
 		ClientRegistry.registerKeyBinding(ModeManager.keyF2);
 		ClientRegistry.registerKeyBinding(ModeManager.keyEsc);
+		ClientRegistry.registerKeyBinding(ModeManager.keyCtrlLeft);
+		ClientRegistry.registerKeyBinding(ModeManager.keyCtrlRight);
 		ClientRegistry.registerKeyBinding(ModeManager.key);
 		
 		instance = new ModeManager();

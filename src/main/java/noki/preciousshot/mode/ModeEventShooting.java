@@ -156,9 +156,9 @@ public class ModeEventShooting {
 		
 	}
 
-	//マウス右クリックにスクリーンショット
+	//マウス右クリック＋CTRLでスクリーンショット
 	@SubscribeEvent
-	public void onMouseInput(InputEvent.MouseInputEvent event) {
+	public void onMouseInput(InputEvent.RawMouseEvent event) {
 
 		if(!this.enable || !SHOT.isEnable()) {
 			return;
@@ -167,12 +167,12 @@ public class ModeEventShooting {
 		if(!PSOption.CLICK.isEnable()) {
 			return;
 		}
-		
-		//右クリックで撮影。
-		if(event.getButton() == GLFW.GLFW_MOUSE_BUTTON_RIGHT && event.getAction() == GLFW.GLFW_PRESS) {
 
+		//右クリック+CTRLで撮影。
+		if(event.getButton() == GLFW.GLFW_MOUSE_BUTTON_RIGHT && event.getAction() == GLFW.GLFW_PRESS && event.getMods() == GLFW.GLFW_MOD_CONTROL) {
 			this.isRightClicked = true;
 			this.dealScreenshot();
+			event.setCanceled(true);
 		}
 		if(event.getButton() == GLFW.GLFW_MOUSE_BUTTON_RIGHT && event.getAction() == GLFW.GLFW_RELEASE) {
 			this.isRightClicked = false;
@@ -180,7 +180,7 @@ public class ModeEventShooting {
 
 	}
 
-	//ホイールでズーム(fov)
+	//ホイール+CTRLでズーム(fov)
 	@SubscribeEvent
 	public void onMouseScroll(InputEvent.MouseScrollEvent event) {
 
@@ -190,7 +190,7 @@ public class ModeEventShooting {
 
 		PreciousShotCore.log("on mouse scroll.");
 		double wheel = event.getScrollDelta();
-		if(wheel != 0) {
+		if(wheel != 0 && (ModeManager.keyCtrlLeft.isKeyDown() || ModeManager.keyCtrlRight.isKeyDown())) {
 			PreciousShotCore.log("wheel not zero / {}.", wheel);
 			if(wheel > 0) {
 				FOV.add(2);
@@ -269,6 +269,10 @@ public class ModeEventShooting {
 		
 		this.fadeStrings.add(new FadeStringRender(LangKey.SHOOTING_MODE.translated(), 0xffffff, 5, 5,
 				Minecraft.getInstance().fontRenderer, 0, 0, 100, 20));
+		if(!SHOT.isEnable()) {
+			this.fadeStrings.add(new FadeStringRender(LangKey.SHOOTING_STOPPED.translated(), 0xff6666, 5, 15,
+					Minecraft.getInstance().fontRenderer, 0, 0, 100, 20));
+		}
 		if(this.fovRender != null) {
 			this.fadeStrings.add(this.fovRender);
 		}
