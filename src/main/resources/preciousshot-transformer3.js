@@ -1,6 +1,5 @@
 /*
-    In default, if you cancel ScreenShotEvent, Forge automatically sends a chat message to the player.
-    This asm skip the message.
+    cancel esc key when shooting mod or panorama mod is open.
  */
 function initializeCoreMod() {
 
@@ -11,69 +10,129 @@ function initializeCoreMod() {
     var InsnNode = Java.type("org.objectweb.asm.tree.InsnNode");
     var VarInsnNode = Java.type("org.objectweb.asm.tree.VarInsnNode");
     var MethodInsnNode = Java.type("org.objectweb.asm.tree.MethodInsnNode");
+    var AbstractInsnNode = Java.type("org.objectweb.asm.tree.AbstractInsnNode");
+    var JumpInsnNode = Java.type("org.objectweb.asm.tree.JumpInsnNode");
+    var LabelNode = Java.type("org.objectweb.asm.tree.LabelNode");
+    var FrameNode = Java.type("org.objectweb.asm.tree.FrameNode");
 
-    var mappedMethodName1 = ASMAPI.mapMethod("func_230455_a_"); // = handleComponentClicked
+    var INVOKEVIRTUAL = Opcodes.INVOKEVIRTUAL
+    var IFEQ = Opcodes.IFEQ;
+    var LABEL = AbstractInsnNode.LABEL;
+    var GOTO = Opcodes.GOTO;
+
+    var mappedMethodName1 = ASMAPI.mapMethod("func_197961_a"); // = onKeyInput
+    var mappedMethodName2 = ASMAPI.mapMethod("func_71385_j"); // = displayInGameMenu
 
 
     /*
     [normal code]
-    if(event.isCanceled()) {
-        messageConsumer.accept(event.getCancelMessage());
-    }
-    else {
-        ~~~~~
+    if (key == 256) {
+        boolean flag2 = InputMappings.isKeyDown(Minecraft.getInstance().getMainWindow().getHandle(), 292);
+        this.mc.displayInGameMenu(flag2);
     }
 
-    [modified byte code]
-    L8
-        LINENUMBER 64 L8
-        ALOAD 9
-        INVOKEVIRTUAL net/minecraftforge/client/event/ScreenshotEvent.isCanceled ()Z
-        IFEQ L9
-    L10
-        LINENUMBER 65 L10
-        ALOAD 5
-        ALOAD 9
-        INVOKEVIRTUAL net/minecraftforge/client/event/ScreenshotEvent.getCancelMessage ()Lnet/minecraft/util/text/ITextComponent;
-
-        //NEW INJECTED CODE//
-        POP
-        RETURN
-        //END//
-
-        INVOKEINTERFACE java/util/function/Consumer.accept (Ljava/lang/Object;)V (itf)
+    [modified code]
+    if (key == 256) {
+        boolean flag2 = InputMappings.isKeyDown(Minecraft.getInstance().getMainWindow().getHandle(), 292);
+        if(!ModeManager.isShootingModeOpen()) {
+            this.mc.displayInGameMenu(flag2);
+        }
+    }
     */
     return {
         'coremodmethod': {
             'target': {
                 'type': 'METHOD',
-                'class': 'net.minecraft.client.gui.screen.Screen',
+                'class': 'net.minecraft.client.KeyboardListener',
                 'methodName': mappedMethodName1,
-                'methodDesc': '(Lnet/minecraft/util/text/Style;)Z'
+                'methodDesc': '(JIIII)V'
             },
             'transformer': function(method) {
-                print("Enter transformer2.");
+                print("Enter transformer3.");
 
+                var targetVirtual;
                 var arrayLength = method.instructions.size();
-                var target_instruction = null;
+                for (var i = 0; i < arrayLength; ++i) {
+                    var instruction = method.instructions.get(i);
+                    if(instruction.getOpcode() == INVOKEVIRTUAL) {
+                        if(instruction.owner == "net/minecraft/client/Minecraft") {
+                            if(instruction.name == mappedMethodName2) {
+                                if(instruction.desc == "(Z)V") {
+                                    if(instruction.itf == false) {
+                                        targetVirtual = instruction;
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                if (!targetVirtual) {
+                    print("can't get targetVirtual.");
+                    return;
+                }
+
+                var labelBeforeVirtual;
+                for (i = method.instructions.indexOf(targetVirtual); i >= 0; --i) {
+                    var instruction = method.instructions.get(i);
+                    if (instruction.getType() == LABEL) {
+                        labelBeforeVirtual = instruction;
+                        break;
+                    }
+                }
+                if (!labelBeforeVirtual) {
+                    return;
+                }
+
+                var labelAfterVirtual;
+                for (i = method.instructions.indexOf(targetVirtual); i < arrayLength; ++i) {
+                    var instruction = method.instructions.get(i);
+                    if (instruction.getType() == LABEL) {
+                        labelAfterVirtual = instruction;
+                        break;
+                    }
+                }
+                if (!labelAfterVirtual) {
+                    return;
+                }
+
+                var newLabel = new LabelNode();
 
                 var toInject = new InsnList();
-                toInject.add(new VarInsnNode(Opcodes.ALOAD, 1));
+
                 toInject.add(new MethodInsnNode(
                         //int opcode
                         Opcodes.INVOKESTATIC,
                         //String owner
-                        "noki/preciousshot/asm/ASMChatClickEvent",
+                        "noki/preciousshot/mode/ModeManager",
                         //String name
-                        "handleComponentClick",
+                        "isShootingModeOpen",
                         //String descriptor
-                        "(Lnet/minecraft/util/text/Style;)V",
+                        "()Z",
                         //boolean isInterface
                         false
                 ));
+                toInject.add(new JumpInsnNode(Opcodes.IFNE, newLabel));
+                method.instructions.insert(labelBeforeVirtual, toInject);
 
-                // Inject new instructions just after the target.
-                method.instructions.insert(toInject);
+                var secondInject = new InsnList();
+                secondInject.add(newLabel);
+//                secondInject.add(new FrameNode(Opcodes.F_SAME, 0, null, 0, null));
+//                secondInject.add(new InsnNode(Opcodes.POP));
+//                secondInject.add(new InsnNode(Opcodes.POP));
+                method.instructions.insert(targetVirtual, secondInject);
+//                toInject.add(new InsnNode(Opcodes.RETURN));
+
+//                method.instructions.insertBefore(targetVirtual, toInject);
+
+                /*                // Inject new instructions just after the target.
+                                method.instructions.insert(labelBeforeVirtual, toInject);
+
+                                var secondInject = new InsnList();
+                                secondInject.add(newLabel);
+                                toInject.add(new InsnNode(Opcodes.POP));
+
+                                method.instructions.insertBefore(labelAfterVirtual, secondInject);*/
 
                 return method;
             }

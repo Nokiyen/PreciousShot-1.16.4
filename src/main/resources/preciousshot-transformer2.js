@@ -1,6 +1,5 @@
 /*
-    In default, if you cancel ScreenShotEvent, Forge automatically sends a chat message to the player.
-    This asm skip the message.
+    add mod controllable chat click event.
  */
 function initializeCoreMod() {
 
@@ -17,31 +16,8 @@ function initializeCoreMod() {
 
     /*
     [normal code]
-    if(event.isCanceled()) {
-        messageConsumer.accept(event.getCancelMessage());
-    }
-    else {
-        ~~~~~
-    }
 
     [modified byte code]
-    L8
-        LINENUMBER 64 L8
-        ALOAD 9
-        INVOKEVIRTUAL net/minecraftforge/client/event/ScreenshotEvent.isCanceled ()Z
-        IFEQ L9
-    L10
-        LINENUMBER 65 L10
-        ALOAD 5
-        ALOAD 9
-        INVOKEVIRTUAL net/minecraftforge/client/event/ScreenshotEvent.getCancelMessage ()Lnet/minecraft/util/text/ITextComponent;
-
-        //NEW INJECTED CODE//
-        POP
-        RETURN
-        //END//
-
-        INVOKEINTERFACE java/util/function/Consumer.accept (Ljava/lang/Object;)V (itf)
     */
     return {
         'coremodmethod': {
