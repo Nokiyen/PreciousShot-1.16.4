@@ -208,10 +208,14 @@ public class RenderHelper {
 		
 		Minecraft mc = Minecraft.getInstance();
 
-		double absTop = (TOP.getDouble()/(double)mc.getMainWindow().getHeight()) * (double)dispHeight;
-		double absRight = (RIGHT.getDouble()/(double)mc.getMainWindow().getWidth()) * (double)dispWidth;
-		double absBottom = (BOTTOM.getDouble()/(double)mc.getMainWindow().getHeight()) * (double)dispHeight;
-		double absLeft = (LEFT.getDouble()/(double)mc.getMainWindow().getWidth()) * (double)dispWidth;
+//		double absTop = (TOP.getDouble()/(double)mc.getMainWindow().getHeight()) * (double)dispHeight;
+//		double absRight = (RIGHT.getDouble()/(double)mc.getMainWindow().getWidth()) * (double)dispWidth;
+//		double absBottom = (BOTTOM.getDouble()/(double)mc.getMainWindow().getHeight()) * (double)dispHeight;
+//		double absLeft = (LEFT.getDouble()/(double)mc.getMainWindow().getWidth()) * (double)dispWidth;
+		double absTop = (top/(double)mc.getMainWindow().getHeight()) * (double)dispHeight;
+		double absRight = (right/(double)mc.getMainWindow().getWidth()) * (double)dispWidth;
+		double absBottom = (bottom/(double)mc.getMainWindow().getHeight()) * (double)dispHeight;
+		double absLeft = (left/(double)mc.getMainWindow().getWidth()) * (double)dispWidth;
 		double absWidth = dispWidth - absRight - absLeft;
 		double absHeight = dispHeight - absTop - absBottom;
 
