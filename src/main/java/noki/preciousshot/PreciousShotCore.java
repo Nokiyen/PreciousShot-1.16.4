@@ -43,7 +43,7 @@ public class PreciousShotCore {
 	//******************************//
 	// define member variables.
 	//******************************//
-	public static boolean DEBUG = true;
+	public static boolean DEBUG = false;
 	public static Logger logger = LogManager.getLogger();
 
 
