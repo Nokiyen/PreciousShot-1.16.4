@@ -33,7 +33,7 @@ public class PreciousShotConf {
 	public static FrameSet frameSet3;
 	public static FrameSet frameSet4;
 
-	public static ConfigValue<String>[] twitterKeys = new ConfigValue[4];
+//	public static ConfigValue<String>[] twitterKeys = new ConfigValue[4];
 
 
 	public static void loadConfig() {
@@ -54,10 +54,10 @@ public class PreciousShotConf {
 		builder.pop();
 
 		builder.push("Twitter");
-		twitterKeys[0] = builder.comment("").define("consumerKey", "");
-		twitterKeys[1] = builder.comment("").define("consumerSecret", "");
-		twitterKeys[2] = builder.comment("").define("accessToken", "");
-		twitterKeys[3] = builder.comment("").define("accessTokenSecret", "");
+//		twitterKeys[0] = builder.comment("").define("consumerKey", "");
+//		twitterKeys[1] = builder.comment("").define("consumerSecret", "");
+//		twitterKeys[2] = builder.comment("").define("accessToken", "");
+//		twitterKeys[3] = builder.comment("").define("accessTokenSecret", "");
 		builder.pop();
 
 		configSpec = builder.build();
